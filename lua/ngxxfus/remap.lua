@@ -218,3 +218,11 @@ vim.keymap.set("i", "<C-e>", function()
   end
   return "<Esc>"
 end, { expr = true, desc = "Close completion popup" })
+
+--- @section File Explorer
+
+--- @brief Toggle file explorer (Space+e)
+map("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle Explorer" })
+
+--- @brief Focus file explorer (Space+o)
+map("n", "<leader>o", ":NvimTreeFocus<CR>", { desc = "Focus Explorer" })
