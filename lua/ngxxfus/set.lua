@@ -1,26 +1,41 @@
+--- @file set.lua
+--- @brief Neovim editor settings and options configuration.
+--- @details Configures global options for interface, indentation, and behavior.
+--- @author ngxxfus
+--- @date 2025-11-30
+
+--- @brief Uncomment to use tokyonight colorscheme.
 -- vim.cmd.colorscheme("tokyonight")
 
+--- @brief Enable 24-bit RGB color in the terminal.
 vim.opt.termguicolors = true
 
-vim.opt.clipboard = 'unnamedplus' -- use system keyboard for yank
- 
-vim.opt.nu = true                 -- set line numbers -- set line numbers
-vim.opt.relativenumber = true     -- use relative line numbers
- 
--- set tab size to 2 spaces
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.shiftwidth = 2
+--- @brief Enable line numbers.
+vim.opt.nu = true
 
--- set tab size to 4 spaces
+--- @brief Show relative line numbers.
+vim.opt.relativenumber = true
+
+--- @brief Sync with system clipboard (requires xclip or similar).
+vim.opt.clipboard = 'unnamedplus'
+
+--- @brief Number of spaces that a <Tab> in the file counts for.
 vim.opt.tabstop = 4
+
+--- @brief Number of spaces that a <Tab> counts for while editing.
 vim.opt.softtabstop = 4
+
+--- @brief Number of spaces to use for each step of (auto)indent.
 vim.opt.shiftwidth = 4
+
+--- @brief Use spaces instead of tabs.
 vim.opt.expandtab = true
+
+--- @brief Do smart autoindenting when starting a new line.
 vim.opt.smartindent = true
- 
+
+--- @brief Disable line wrapping.
 vim.opt.wrap = false
- 
-vim.opt.incsearch = true -- incremental search
- 
-vim.opt.termguicolors = true
+
+--- @brief Show search matches as you type.
+vim.opt.incsearch = true
