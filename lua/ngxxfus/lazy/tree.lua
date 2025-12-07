@@ -38,7 +38,7 @@ return {
 
         --- @brief Filtering options.
         filters = {
-          dotfiles = true,
+          dotfiles = false,
         },
       })
     end,

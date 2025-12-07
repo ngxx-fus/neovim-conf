@@ -226,3 +226,22 @@ map("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle Explorer" })
 
 --- @brief Focus file explorer (Space+o)
 map("n", "<leader>o", ":NvimTreeFocus<CR>", { desc = "Focus Explorer" })
+
+--- @brief Go to definition (F12)
+--- @details Jumps to the definition of the symbol under cursor.
+---          Equivalent to "Go to Definition" in VS Code.
+map("n", "<F12>", vim.lsp.buf.definition, { desc = "LSP: Go to definition" })
+
+--- @brief Show hover information (K or Space+k)
+--- @details Displays documentation, type info, or macro expansion in a floating window.
+---          Equivalent to mouse hover in VS Code.
+map("n", "K", vim.lsp.buf.hover, { desc = "LSP: Hover documentation" })
+map("n", "<leader>k", vim.lsp.buf.hover, { desc = "LSP: Hover documentation" })
+
+--- @brief Go to declaration (gD)
+--- @details Jumps to where the symbol was declared (useful for header files in C/C++)
+map("n", "gD", vim.lsp.buf.declaration, { desc = "LSP: Go to declaration" })
+
+--- @brief List implementations (gi)
+--- @details Lists all implementations of the interface/symbol under cursor
+map("n", "gi", vim.lsp.buf.implementation, { desc = "LSP: List implementations" })
