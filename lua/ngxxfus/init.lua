@@ -23,22 +23,22 @@ require("ngxxfus.set")
 require("ngxxfus.remap")
 
 --- @section Plugin Management
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
 
---- @brief Bootstrap and initialize Lazy.nvim plugin manager
-require("ngxxfus.lazy_init")
-
---- @section Plugin Configurations
-
---- @brief Load UI icons configuration
-require("ngxxfus.lazy.icons")
-
---- @brief Configure auto-completion engine (nvim-cmp)
---- @note Depends on snippet engine and LSP sources
-require("ngxxfus.lazy.cmp")
-
---- @brief Configure Language Server Protocol (LSP) settings
---- @note Should be loaded before components that depend on LSP (like pickers)
-require("ngxxfus.lazy.lsp")
-
---- @brief Configure Telescope fuzzy finder
-require("ngxxfus.lazy.telescope")
+--- @brief Load all plugin configurations from the 'lazy' directory
+--- @see https://github.com/folke/lazy.nvim
+require("lazy").setup({
+  spec = "ngxxfus.lazy",
+  change_detection = { notify = true }, -- Optional: notify on config changes
+})

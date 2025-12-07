@@ -8,6 +8,7 @@ return {
   {
     "kevinhwang91/nvim-ufo",
     dependencies = {
+      "neovim/nvim-lspconfig", -- Ensure LSP is available for folding provider
       "kevinhwang91/promise-async",
     },
     config = function()

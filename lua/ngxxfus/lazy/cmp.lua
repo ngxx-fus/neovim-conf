@@ -40,43 +40,9 @@ return {
       local cmp = require("cmp")
       --! @brief Load luasnip snippet engine
       local luasnip = require("luasnip")
-      --! @brief Load lspconfig for LSP integration
-      local lspconfig = require("lspconfig")
-      --! @brief Get default LSP capabilities enhanced by cmp
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       --! @brief Load snippets from vscode snippet format
       require("luasnip.loaders.from_vscode").lazy_load()
-
-      --! @section LSP Server Configuration
-      --! @brief Configure Lua language server with cmp capabilities
-      lspconfig.lua_ls.setup({
-        --! @brief Pass cmp capabilities to lua_ls
-        capabilities = capabilities,
-        --! @section Lua LS Settings
-        settings = {
-          --! @section Lua Diagnostics
-          Lua = {
-            --! @brief Allow vim global variable in diagnostics
-            diagnostics = { globals = { "vim" } },
-            --! @section Workspace Configuration
-            workspace = {
-              --! @brief Don't check third-party libraries
-              checkThirdParty = false,
-              --! @brief Include Neovim runtime files in workspace
-              library = vim.api.nvim_get_runtime_file("", true),
-            },
-          },
-        },
-      })
-
-      --! @brief Configure Clang language server with cmp capabilities
-      lspconfig.clangd.setup({
-        --! @brief Pass cmp capabilities to clangd
-        capabilities = capabilities,
-        --! @section Clangd Command Options
-        cmd = { "clangd", "--header-insertion=never", "--clang-tidy" },
-      })
 
       --! @section Cmp Setup
       --! @brief Configure completion engine

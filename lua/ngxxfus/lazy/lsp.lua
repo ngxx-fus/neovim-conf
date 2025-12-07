@@ -1,83 +1,82 @@
 --- @file lsp.lua
 --- @brief Language Server Protocol (LSP) configuration
 --- @details Configures LSP servers using:
----          - williamboman/mason.nvim: LSP server installer
----          - williamboman/mason-lspconfig.nvim: Mason integration with lspconfig
----          - neovim/nvim-lspconfig: LSP client configuration
+---          - `williamboman/mason.nvim`: LSP server installer
+---          - `williamboman/mason-lspconfig.nvim`: Mason integration with lspconfig
+---          - `neovim/nvim-lspconfig`: LSP client configuration
 --- @author ngxxfus
 --- @date 2025-11-30
 --- @see https://github.com/williamboman/mason.nvim
 --- @see https://github.com/neovim/nvim-lspconfig
 
 return {
-  --- @section Mason Plugin
-  --- @brief Package manager for LSP servers, linters, and formatters
   {
-    --- @brief williamboman/mason.nvim - Portable package manager
+    -- Mason: LSP Installer
     "williamboman/mason.nvim",
-    --- @brief Use default configuration
-    config = true,
-  },
-
-  --- @section Mason-LSPConfig Integration
-  --- @brief Integration between mason and lspconfig
-  {
-    --- @brief williamboman/mason-lspconfig.nvim - mason/lspconfig bridge
-    "williamboman/mason-lspconfig.nvim",
-    
-    --- @section Plugin Dependencies
-    --- @brief Requires mason.nvim to be loaded first
-    dependencies = { "mason.nvim" },
-
-    --- @section Configuration
-    --- @brief Setup mason-lspconfig
     config = function()
-      --- @brief Load and setup mason-lspconfig with automatic installer
-      require("mason-lspconfig").setup({
-        --- @section Ensure Installed Servers
-        --- @brief LSP servers to automatically ensure are installed
-        ensure_installed = { "lua_ls" },
-      })
+      require("mason").setup()
     end,
   },
-
-  --- @section LSPConfig
-  --- @brief Neovim LSP client configuration
   {
-    --- @brief neovim/nvim-lspconfig - Configure LSP servers
-    "neovim/nvim-lspconfig",
-
-    --- @section Configuration
-    --- @brief Setup Lua language server
+    -- Mason-LSPConfig: Cầu nối giữa Mason và nvim-lspconfig
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
     config = function()
-      --- @brief Get lspconfig module
       local lspconfig = require("lspconfig")
-      
-      --- @section Lua LS Configuration
-      --- @brief Configure Lua language server with custom settings
-      --- @note Ensure you have a wrapper or alias for vim.lsp.config, 
-      ---       otherwise use lspconfig.lua_ls.setup({})
-      vim.lsp.config('lua_ls', {
-        --- @section Lua LS Settings
-        --- @brief Custom settings for Lua language server
-        settings = {
-          --- @section Lua Configuration
-          Lua = {
-            --- @section Diagnostics
-            --- @brief Allow 'vim' global variable to prevent warnings
-            diagnostics = { globals = { "vim" } },
-            
-            --- @section Workspace Configuration
-            workspace = { 
-              --- @brief Disable third-party library check for faster loading
-              checkThirdParty = false 
-            },
-          },
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      -- Keymaps are defined in remap.lua and are global.
+      -- This on_attach function is a good place for buffer-local settings if needed.
+      local on_attach = function(client, bufnr)
+        -- Helper function to create buffer-local keymaps
+        local map = function(keys, func, desc)
+          vim.keymap.set("n", keys, func, { buffer = bufnr, noremap = true, silent = true, desc = "LSP: " .. desc })
+        end
+
+        -- Các phím tắt bạn yêu cầu
+        map("gd", vim.lsp.buf.definition, "Go to Definition")
+        map("gi", vim.lsp.buf.implementation, "Go to Implementation")
+
+        -- Các phím tắt hữu ích khác
+        map("K", vim.lsp.buf.hover, "Hover Documentation")
+        map("gr", vim.lsp.buf.references, "Go to References")
+        map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
+        map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
+      end
+
+      -- A table to hold custom server configurations
+      local servers = {
+         lua_ls = {
+           settings = {
+             Lua = {
+               diagnostics = { globals = { "vim" } },
+               workspace = { checkThirdParty = false, library = vim.api.nvim_get_runtime_file("", true) },
+             },
+           },
+         },
+         clangd = {
+           -- For ESP-IDF, you might need to point to the compile_commands.json.
+           -- This is best done with a .clangd file in your project root.
+           cmd = { "clangd", "--header-insertion=never", "--clang-tidy" },
+         },
+         -- pyright and bashls will use the default setup below
+       }
+ 
+      require("mason-lspconfig").setup({
+        -- A list of servers to automatically install
+        ensure_installed = { "clangd", "pyright", "lua_ls", "bashls" },
+        handlers = {
+          function(server_name)
+            local server_opts = servers[server_name] or {}
+            server_opts.on_attach = on_attach
+            server_opts.capabilities = capabilities
+            lspconfig[server_name].setup(server_opts)
+          end,
         },
       })
-
-      --- @brief Enable the lua_ls language server
-      vim.lsp.enable('lua_ls') 
     end,
   },
 }
