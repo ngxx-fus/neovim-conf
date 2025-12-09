@@ -26,7 +26,7 @@ return {
           lualine_a = {
             {
               --- @brief Custom Signature
-              function() return " ngxx.fus" end, 
+              function() return "[ngxx.fus]" end, 
               
               --- @brief Add padding for better visuals
               padding = { left = 1, right = 1 },
