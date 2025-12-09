@@ -1,49 +1,78 @@
---[[
-  @file bufferline.lua
-  @brief Buffer line UI plugin configuration
-  @details Configures the akinsho/bufferline.nvim plugin for displaying
-           open buffers as a tab-like bar at the top of the editor.
-  @author ngxxfus
-  @date 2025-11-30
-  @see https://github.com/akinsho/bufferline.nvim
-]]
-
---! @section Plugin Specification
---! @brief Bufferline plugin table for lazy.nvim
+--- @file bufferline.lua
+--- @brief Buffer line UI plugin configuration
+--- @details Configures the akinsho/bufferline.nvim plugin compatible with VSCode theme.
+--- @author ngxxfus
+--- @date 2025-12-09
 
 return {
   {
-    --! @brief akinsho/bufferline.nvim plugin
+    --- @brief akinsho/bufferline.nvim plugin
     "akinsho/bufferline.nvim",
-    --! @brief Version constraint (latest)
+    
+    --- @brief Version constraint (latest)
     version = "*", 
-    --! @section Plugin Dependencies
-    --! @brief Required dependencies for bufferline
-    dependencies = {
-      --! @brief Provides icons for file types in buffers
-      "nvim-tree/nvim-web-devicons"
-    },
-    --! @brief Load event - VeryLazy to defer loading until UI is ready
+    
+    --- @brief Required dependencies for bufferline
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    
+    --- @brief Load event - VeryLazy
     event = "VeryLazy", 
-    --! @section Configuration
-    --! @brief Setup function for bufferline
+    
+    --- @brief Setup function for bufferline
     config = function()
-      --! @brief Load and setup bufferline with options
       require("bufferline").setup({
-        --! @section Display Options
+        --- @section Display Options (Giữ nguyên cấu hình cũ của bạn)
         options = {
-          --! @brief Mode: "buffers" (show open buffers) or "tabs" (show tabs)
-          mode = "buffers",  
-          --! @brief Show diagnostics from nvim_lsp
+          mode = "buffers",
           diagnostics = "nvim_lsp",
-          --! @brief Use slant separators between buffers
           separator_style = "slant",
-          --! @brief Hide the close icon for each buffer
           show_buffer_close_icons = false,
-          --! @brief Hide the close icon at the end
           show_close_icon = false,
-          --! @brief Enable colored icons for file types
           color_icons = true,
+        },
+
+        --- @section Theme Integration (Thêm phần này từ document của vscode.nvim)
+        highlights = {
+            fill = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "StatusLineNC" },
+            },
+            background = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "StatusLine" },
+            },
+            buffer_visible = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "Normal" },
+            },
+            buffer_selected = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "Normal" },
+            },
+            separator = {
+                fg = { attribute = "bg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "StatusLine" },
+            },
+            separator_selected = {
+                fg = { attribute = "fg", highlight = "Special" },
+                bg = { attribute = "bg", highlight = "Normal" },
+            },
+            separator_visible = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "StatusLineNC" },
+            },
+            close_button = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "StatusLine" },
+            },
+            close_button_selected = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "Normal" },
+            },
+            close_button_visible = {
+                fg = { attribute = "fg", highlight = "Normal" },
+                bg = { attribute = "bg", highlight = "Normal" },
+            },
         },
       })
     end,
