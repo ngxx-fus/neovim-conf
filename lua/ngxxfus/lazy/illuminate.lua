@@ -30,7 +30,7 @@ return {
         },
 
         --- @brief Delay in milliseconds before highlighting.
-        delay = 10,
+        delay = 100,
 
         --- @brief Filetype specific overrides.
         filetype_overrides = {},
