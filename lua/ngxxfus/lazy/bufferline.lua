@@ -16,7 +16,7 @@ return {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     
     --- @brief Load event - VeryLazy
-    event = "VeryLazy", 
+    event = {"VimEnter", "VeryLazy", "BufReadPre", "BufNewFile"}, 
     
     --- @brief Setup function for bufferline
     config = function()

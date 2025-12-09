@@ -55,7 +55,7 @@ return {
       end
 
       --- @brief Map <leader>gg to open Lazygit floating window.
-      vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
+      --- vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
     end,
   },
 }
