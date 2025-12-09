@@ -2,7 +2,7 @@
 --- @brief Configuration for Telescope, a fuzzy finder over lists.
 --- @details Configures the fuzzy finder interface, layout, and FZF integration for high-performance sorting.
 --- @author ngxxfus
---- @date 2025-11-30
+--- @date 2025-12-09
 
 return {
   {
@@ -15,7 +15,7 @@ return {
       "nvim-lua/plenary.nvim",
 
       --- @brief Native C port of FZF for improved performance.
-      --- @details Requires 'make' to be available on the system for compilation.
+      --- @details Requires 'make' (or cmake on Windows) to be available.
       {
         "nvim-telescope/telescope-fzf-native.nvim",
         build = "make",
@@ -63,8 +63,9 @@ return {
         },
       })
 
-      --- @brief Load the FZF extension after the main setup is complete.
-      require("telescope").load_extension("fzf")
+      --- @brief Safely load the FZF extension.
+      --- @details Uses pcall to prevent Neovim crash if fzf build fails.
+      pcall(require("telescope").load_extension, "fzf")
     end,
   },
 }
