@@ -8,7 +8,8 @@
 return {
   {
     --- @brief A clean, dark Neovim theme written in Lua.
-    "folke/tokyonight.nvim",
+    -- "folke/tokyonight.nvim",
+    "EdenEast/nightfox.nvim",
 
     --- @brief Disable lazy loading.
     --- @details Colorschemes must load immediately to prevent visual flashing during startup.
@@ -24,7 +25,7 @@ return {
       vim.opt.termguicolors = true
 
       --- @brief Apply the 'tokyonight' colorscheme.
-      vim.cmd("colorscheme tokyonight")
+      vim.cmd("colorscheme Dawnfox")
     end,
   },
 }
