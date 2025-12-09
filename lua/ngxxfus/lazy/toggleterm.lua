@@ -22,29 +22,29 @@ return {
 
         --- @brief Appearance of the terminal window.
         --- @details 'float' creates a popup window in the center. 
-        ---          Options: 'vertical', 'horizontal', 'tab', 'float'.
         direction = 'float',
 
         --- @brief Floating window specific options.
         float_opts = {
           --- @brief Border style: 'single', 'double', 'shadow', 'curved'.
           border = 'curved',
-          --- @brief Window transparency (matches your Telescope config).
-          winblend = 5,
+          
+          --- @brief Window transparency (0 = Opaque/Solid, 100 = Invisible).
+          --- @details Set to 0 to prevent text overlapping from buffers below.
+          winblend = 0, 
         },
 
         --- @brief Close the terminal window when the process exits.
         close_on_exit = true,
 
         --- @brief Shell to use (defaults to system default).
-        --- @details On Windows, this usually picks PowerShell or CMD.
         shell = vim.o.shell,
 
         --- @brief Auto-scroll to bottom on new output.
         auto_scroll = true,
       })
       
-      --- @section Lazygit Integration (Optional)
+      --- @section Lazygit Integration
       --- @brief Create a custom terminal for Lazygit.
       local Terminal = require('toggleterm.terminal').Terminal
       local lazygit = Terminal:new({ cmd = "lazygit", hidden = true })
@@ -55,6 +55,7 @@ return {
       end
 
       --- @brief Map <leader>gg to open Lazygit floating window.
+      --- @details (Uncommented for immediate use)
       --- vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
     end,
   },
