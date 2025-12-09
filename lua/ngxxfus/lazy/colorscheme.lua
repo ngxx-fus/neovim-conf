@@ -1,5 +1,5 @@
 --- @file colorscheme.lua
---- @brief Colorscheme configuration for VSCode theme.
+--- @brief Colorscheme configuration for VSCode Light theme.
 --- @author ngxxfus
 --- @date 2025-12-09
 
@@ -16,15 +16,19 @@ return {
     
     --- @brief Configure and activate the theme.
     config = function()
-      --- @brief Set background to dark (or light).
-      vim.o.background = 'dark'
+      --- @brief Set background to light.
+      vim.o.background = 'light'
 
-      --- @brief Get color palette if needed for overrides.
+      --- @brief Get color palette (will fetch light colors now).
       local c = require('vscode.colors').get_colors()
 
       --- @brief Setup theme options.
       require('vscode').setup({
+        -- Explicitly set style to light
+        style = 'light',
+
         -- Enable transparent background
+        -- Note: On light themes, transparency might look odd if your terminal bg is dark.
         transparent = true,
 
         -- Enable italic comment
@@ -41,6 +45,7 @@ return {
 
         -- Override highlight groups
         group_overrides = {
+            -- Update Cursor color logic for light theme compatibility if needed
             Cursor = { fg=c.vscDarkBlue, bg=c.vscLightGreen, bold=true },
         }
       })
