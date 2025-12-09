@@ -12,6 +12,13 @@ return {
     --- @brief Load plugin when a buffer is read or a new file is created.
     event = { "BufReadPost", "BufNewFile" },
 
+    --- @section Keymaps
+    --- @brief Define keys to jump between references
+    keys = {
+      { "<A-n>", function() require("illuminate").goto_next_reference(false) end, desc = "Next Reference" },
+      { "<A-p>", function() require("illuminate").goto_prev_reference(false) end, desc = "Prev Reference" },
+    },
+    
     --- @brief Configuration function.
     config = function()
       require('illuminate').configure({
