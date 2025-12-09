@@ -4,7 +4,7 @@
 
 A clean, modular, and extensible NeoVim configuration built with Lazy.nvim. This setup provides a solid foundation for development with support for LSP, autocompletion, fuzzy finding, and more.
 
-![DEMO](imgs/image.png)
+![DEMO](imgs/image.gif)
 
 ---
 
