@@ -1,36 +1,54 @@
 --- @file colorscheme.lua
---- @brief Colorscheme plugin configuration.
+--- @brief VSCode theme configuration.
 --- @details Configures the Mofiqul/vscode.nvim colorscheme.
 --- @author ngxxfus
 --- @date 2025-12-09
---- @see https://github.com/Mofiqul/vscode.nvim
 
 return {
   {
-    --- @brief VSCode Dark Plus theme for Neovim.
+    --- @brief The VSCode theme plugin.
     "Mofiqul/vscode.nvim",
 
-    --- @brief Disable lazy loading to prevent startup flash.
+    --- @brief Load immediately.
     lazy = false,
 
-    --- @brief Set maximum load priority.
+    --- @brief High priority to ensure UI looks right on startup.
     priority = 1000,
 
-    --- @brief Configure and activate the colorscheme.
+    --- @brief Configure the theme options.
     config = function()
-      --- @brief Enable 24-bit RGB color support.
-      vim.opt.termguicolors = true
+      --- @brief Set background to dark (can be 'light').
+      vim.o.background = 'light'
 
-      --- @brief Optional: Customize the theme before applying.
-      -- local c = require('vscode.colors').get_colors()
-      -- require('vscode').setup({
-      --     transparent = true,
-      --     italic_comments = true,
-      --     disable_nvimtree_bg = true,
-      -- })
+      --- @brief Get color palette for overrides (optional).
+      local c = require('vscode.colors').get_colors()
 
-      --- @brief Apply the 'vscode' colorscheme.
-      vim.cmd("colorscheme vscode")
+      --- @brief Setup theme options.
+      require('vscode').setup({
+        --- @brief Enable transparent background.
+        transparent = true,
+
+        --- @brief Enable italic comments.
+        italic_comments = true,
+
+        --- @brief Underline links.
+        underline_links = true,
+
+        --- @brief Disable nvim-tree background to match transparency.
+        disable_nvimtree_bg = true,
+
+        --- @brief Apply colors to the internal terminal.
+        terminal_colors = true,
+
+        --- @brief Override specific highlight groups.
+        group_overrides = {
+          -- Example: Make cursor bold with specific colors
+          Cursor = { fg = c.vscDarkBlue, bg = c.vscLightGreen, bold = true },
+        },
+      })
+
+      --- @brief Activate the colorscheme.
+      vim.cmd.colorscheme "vscode"
     end,
   },
 }
