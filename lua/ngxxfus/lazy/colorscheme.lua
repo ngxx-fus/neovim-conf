@@ -29,7 +29,7 @@ return {
 
         -- Enable transparent background
         -- Note: On light themes, transparency might look odd if your terminal bg is dark.
-        transparent = true,
+        transparent = false,
 
         -- Enable italic comment
         italic_comments = true,
