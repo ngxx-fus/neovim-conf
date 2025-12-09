@@ -25,9 +25,9 @@ return {
         options = {
           mode = "buffers",
           diagnostics = "nvim_lsp",
-          separator_style = "slant",
+          separator_style = "thick",
           show_buffer_close_icons = false,
-          show_close_icon = false,
+          show_close_icon = true,
           color_icons = true,
         },
 
