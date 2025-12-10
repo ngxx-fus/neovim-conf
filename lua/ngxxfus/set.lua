@@ -39,3 +39,16 @@ vim.opt.wrap = false
 
 --- @brief Show search matches as you type.
 vim.opt.incsearch = true
+
+-- /// Create an autocommand to override cursor color on ColorScheme event
+vim.api.nvim_create_autocmd("ColorScheme", {
+    pattern = "*",
+    callback = function()
+        -- /// Set cursor background to Red (#FF0000) and text to White (#FFFFFF)
+        vim.api.nvim_set_hl(0, "Cursor", { bg = "#9CC6DB", fg = "#234C6A" })
+
+        -- /// Force Neovim to use the 'Cursor' highlight group for Normal, Visual, and Command modes
+        vim.opt.guicursor = "n-v-c-i-t:block-Cursor"
+    end,
+})
+
