@@ -5,7 +5,7 @@
 ---          - `williamboman/mason-lspconfig.nvim`: Mason integration with lspconfig
 ---          - `neovim/nvim-lspconfig`: LSP client configuration
 --- @author ngxxfus
---- @date 2025-11-30
+--- @date 2025-12-10
 --- @see https://github.com/williamboman/mason.nvim
 --- @see https://github.com/neovim/nvim-lspconfig
 
@@ -67,7 +67,7 @@ return {
  
       require("mason-lspconfig").setup({
         -- A list of servers to automatically install
-        ensure_installed = { "clangd", "pyright", "lua_ls", "bashls" },
+        -- ensure_installed = { "clangd", "pyright", "lua_ls", "bashls" },
         handlers = {
           function(server_name)
             local server_opts = servers[server_name] or {}
