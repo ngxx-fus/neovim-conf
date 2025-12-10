@@ -25,7 +25,7 @@ return {
       vim.o.fillchars = [[eob: ,fold: ,foldopen: ,foldsep: ,foldclose:]]
 
       -- Custom highlight
-      vim.api.nvim_set_hl(0, "FoldColumn", { fg = "#DFEFFF", bg = "NONE" })
+      vim.api.nvim_set_hl(0, "FoldColumn", { fg = "#FFFFFF", bg = "NONE" })
 
       -- Handler xử lý text (số dòng hiện ở cuối)
       local handler = function(virtText, lnum, endLnum, width, truncate)
