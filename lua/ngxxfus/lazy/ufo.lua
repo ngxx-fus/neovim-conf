@@ -12,22 +12,15 @@ return {
       "kevinhwang91/promise-async",
     },
     config = function()
-      -- 1. Bắt buộc phải bật cột fold lên
       vim.o.foldcolumn = "1" 
       vim.o.foldlevel = 99
       vim.o.foldlevelstart = 99
       vim.o.foldenable = true
       
-      -- 2. TRICK QUAN TRỌNG Ở ĐÂY:
-      -- foldopen: " " (Khoảng trắng) -> Để nó che mất số level 1, 2, 3...
-      -- foldclose: "" (Hoặc bạn thay bằng ">" nếu thích) -> Hiện mũi tên khi đóng
-      -- foldsep: " "  -> Xóa vạch kẻ dọc cho sạch
       vim.o.fillchars = [[eob: ,fold: ,foldopen: ,foldsep: ,foldclose:]]
 
-      -- Custom highlight
-      vim.api.nvim_set_hl(0, "FoldColumn", { fg = "#FFFFFF", bg = "NONE" })
+      vim.api.nvim_set_hl(0, "FoldColumn", { fg = "#B8DB80", bg = "NONE" })
 
-      -- Handler xử lý text (số dòng hiện ở cuối)
       local handler = function(virtText, lnum, endLnum, width, truncate)
         local newVirtText = {}
         local suffix = (' 󰁂 %d '):format(endLnum - lnum)
