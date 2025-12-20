@@ -58,9 +58,14 @@ return {
            },
          },
          clangd = {
-           -- For ESP-IDF, you might need to point to the compile_commands.json.
-           -- This is best done with a .clangd file in your project root.
-           cmd = { "clangd", "--header-insertion=never", "--clang-tidy" },
+            -- For ESP-IDF, you might need to point to the compile_commands.json.
+            -- This is best done with a .clangd file in your project root.
+            cmd = { 
+                "clangd", 
+                "--header-insertion=never", 
+                "--clang-tidy" , 
+                "--query-driver=/home/fus/.espressif/tools/**/bin/*-gcc*",
+            },
          },
          -- pyright and bashls will use the default setup below
        }

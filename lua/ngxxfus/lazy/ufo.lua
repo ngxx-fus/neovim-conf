@@ -17,7 +17,7 @@ return {
       vim.o.foldlevelstart = 99
       vim.o.foldenable = true
       
-      vim.o.fillchars = [[eob: ,fold: ,foldopen: ,foldsep: ,foldclose:]]
+      -- vim.o.fillchars = [[eob: ,fold: ,foldopen: ,foldsep: ,foldclose:]]
 
       vim.api.nvim_set_hl(0, "FoldColumn", { fg = "#B8DB80", bg = "NONE" })
 

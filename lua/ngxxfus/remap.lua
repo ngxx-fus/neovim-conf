@@ -35,11 +35,12 @@ map('n', '<leader>n', "<cmd>tabnew<cr>", { desc = 'New Tab (far-right)' })
 map("n", "<leader>H", "<Cmd>BufferLineMovePrev<CR>", { desc = "Move buffer left" })
 map("n", "<leader>L", "<Cmd>BufferLineMoveNext<CR>", { desc = "Move buffer right" })
 map("n", "<leader>q", "<Cmd>bdelete<CR>", { desc = "Close buffer" })
+map("n", "<leader>Q", "<Cmd>bdelete!<CR>", { desc = "Close buffer (force)" })
 
 --- @section Buffer Jump (Alt + Number)
 --- @brief Jump to buffer 1-9 using Alt + Number (Preserves Vim count feature)
 for i = 1, 9 do
-  map("n", "<A-" .. i .. ">", "<Cmd>BufferLineGoToBuffer " .. i .. "<CR>", {
+  map({ "n", "i", "v", "t" }, "<A-" .. i .. ">", "<Cmd>BufferLineGoToBuffer " .. i .. "<CR>", {
     desc = "Go to buffer " .. i,
     silent = true,
   })
