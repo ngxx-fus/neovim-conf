@@ -14,7 +14,7 @@ vim.opt.termguicolors = true
 vim.opt.nu = true
 
 --- @brief Show relative line numbers.
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false -- true
 
 --- @brief Sync with system clipboard (requires xclip or similar).
 vim.opt.clipboard = 'unnamedplus'
@@ -42,17 +42,4 @@ vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
 
--- Create an autocommand to override cursor color on ColorScheme event
-vim.api.nvim_create_autocmd("ColorScheme", {
-    pattern = "*",
-    callback = function()
-        -- /// Set cursor background to Red (#FF0000) and text to White (#FFFFFF)
-        -- vim.api.nvim_set_hl(0, "Cursor", { bg = "#9CC6DB", fg = "#234C6A" })
-        vim.api.nvim_set_hl(0, "Cursor", { reverse = true})
-        -- /// Force Neovim to use the 'Cursor' highlight group for Normal, Visual, and Command modes
-        -- vim.opt.guicursor = "n-v-c-i-t:block-Cursor"
-        vim.opt.guicursor = "n-v-c:block-Cursor,i-ci-ve:ver25-Cursor"
-        -- vim.opt.guicursor = "n-v-c:block,i-ci-ve:ver25"
-    end,
-})
 
