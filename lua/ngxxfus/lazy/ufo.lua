@@ -2,7 +2,7 @@
 --- @brief Code folding configuration using nvim-ufo.
 --- @details Provides LSP-aware code folding with custom virtual text handler.
 --- @author ngxxfus
---- @date 2025-12-10
+--- @date 2025-12-20
 
 return {
   {
@@ -16,7 +16,6 @@ return {
       vim.o.foldlevel = 99
       vim.o.foldlevelstart = 99
       vim.o.foldenable = true
-      
       -- vim.o.fillchars = [[eob: ,fold: ,foldopen: ,foldsep: ,foldclose:]]
 
       vim.api.nvim_set_hl(0, "FoldColumn", { fg = "#B8DB80", bg = "NONE" })
@@ -75,7 +74,7 @@ return {
           }
         },
         provider_selector = function(bufnr, filetype, buftype)
-          return { "lsp", "indent" }
+          return { "treesitter", "indent" }
         end,
         fold_virt_text_handler = handler, 
       })

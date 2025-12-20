@@ -46,7 +46,7 @@ return {
       end
 
       -- Override Visual mode (Selection) & Cursor colors
-      vim.api.nvim_set_hl(0, "Visual", { bg = "#264F78", fg = "#ffffff" })
+      -- vim.api.nvim_set_hl(0, "Visual", { bg = "#FFDC7F", fg = "#40534C" })
       vim.api.nvim_set_hl(0, "Cursor", { fg = c.vscDarkBlue, bg = c.vscLightGreen, bold = true })
 
     end,
