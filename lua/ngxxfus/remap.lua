@@ -125,3 +125,6 @@ end, { expr = true, desc = "Close completion popup" })
 --- @section File Explorer
 map("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle Explorer" })
 map("n", "<leader>o", ":NvimTreeFocus<CR>", { desc = "Focus Explorer" })
+
+--- @brief Go to definition using Ctrl + Left Click
+map("n", "<C-LeftMouse>", "<LeftMouse><cmd>lua vim.lsp.buf.definition()<CR>", { desc = "LSP: Go to definition (Mouse)" })
