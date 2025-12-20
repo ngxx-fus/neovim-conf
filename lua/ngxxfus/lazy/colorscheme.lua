@@ -47,6 +47,7 @@ return {
         group_overrides = {
             -- Update Cursor color logic for light theme compatibility if needed
             Cursor = { fg=c.vscDarkBlue, bg=c.vscLightGreen, bold=true },
+            Visual = { bg = "#264F78" , fg = "#ffffff"},
         }
       })
 
