@@ -64,7 +64,6 @@ return {
                 "clangd", 
                 "--header-insertion=never", 
                 "--clang-tidy" , 
-                "--query-driver=/home/fus/.espressif/tools/**/bin/*-gcc*",
             },
          },
          -- pyright and bashls will use the default setup below
