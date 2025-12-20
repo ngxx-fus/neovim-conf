@@ -18,7 +18,7 @@ return {
     end,
   },
   {
-    -- Mason-LSPConfig: Cầu nối giữa Mason và nvim-lspconfig
+    -- Mason-LSPConfig: Bridges Mason with nvim-lspconfig
     "williamboman/mason-lspconfig.nvim",
     dependencies = {
       "williamboman/mason.nvim",
@@ -28,6 +28,13 @@ return {
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+      -- Configure UI borders for floating windows
+      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+      vim.diagnostic.config({
+        float = { border = "single" }, -- Use single border for diagnostics
+      })
+       
       -- Keymaps are defined in remap.lua and are global.
       -- This on_attach function is a good place for buffer-local settings if needed.
       local on_attach = function(client, bufnr)
@@ -36,11 +43,11 @@ return {
           vim.keymap.set("n", keys, func, { buffer = bufnr, noremap = true, silent = true, desc = "LSP: " .. desc })
         end
 
-        -- Các phím tắt bạn yêu cầu
+        -- Essential keybindings
         map("gd", vim.lsp.buf.definition, "Go to Definition")
         map("gi", vim.lsp.buf.implementation, "Go to Implementation")
 
-        -- Các phím tắt hữu ích khác
+        -- Other useful keybindings
         map("K", vim.lsp.buf.hover, "Hover Documentation")
         map("gr", vim.lsp.buf.references, "Go to References")
         map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
@@ -62,7 +69,10 @@ return {
             -- This is best done with a .clangd file in your project root.
             cmd = { 
                 "clangd", 
+                "--background-index",
+                "--completion-style=detailed",
                 "--header-insertion=never", 
+                "--function-arg-placeholders",
                 "--clang-tidy" , 
             },
          },

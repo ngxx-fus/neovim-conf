@@ -5,57 +5,50 @@
 
 return {
   {
-    --- @brief The VSCode theme plugin.
     "Mofiqul/vscode.nvim",
-    
-    --- @brief Load immediately.
     lazy = false,
-    
-    --- @brief High priority to ensure UI loads correctly.
     priority = 1000,
-    
-    --- @brief Configure and activate the theme.
     config = function()
-      --- @brief Set background to light.
+      -- 1. Basic configuration for the plugin
       vim.o.background = 'light'
-
-      --- @brief Get color palette (will fetch light colors now).
       local c = require('vscode.colors').get_colors()
 
-      --- @brief Setup theme options.
       require('vscode').setup({
-        -- Explicitly set style to light
         style = 'light',
-
-        -- Enable transparent background
-        -- Note: On light themes, transparency might look odd if your terminal bg is dark.
         transparent = false,
-
-        -- Enable italic comment
         italic_comments = true,
-
-        -- Enable italic inlay type hints
-        italic_inlayhints = true,
-
-        -- Disable nvim-tree background color
         disable_nvimtree_bg = true,
-
-        -- Apply theme colors to terminal
         terminal_colors = true,
-
-        -- Override highlight groups
-        group_overrides = {
-            -- Update Cursor color logic for light theme compatibility if needed
-            Cursor = { fg=c.vscDarkBlue, bg=c.vscLightGreen, bold=true },
-            Visual = { bg = "#264F78" , fg = "#ffffff"},
-        }
+        -- Tip: Skip group_overrides here; we handle it manually below to ensure precedence.
       })
 
-      --- @brief Enable 24-bit RGB color support.
-      vim.opt.termguicolors = true
-
-      --- @brief Apply the 'vscode' colorscheme.
+      -- 2. Load the theme
       vim.cmd.colorscheme("vscode")
+
+      -- 3. === FORCE OVERRIDE (POST-LOAD ENFORCEMENT) ===
+      -- Apply colors directly after the theme loads to ensure they are not overwritten.
+      
+      -- List of highlight groups to override (Covers both standard and TreeSitter groups)
+      local groups = {
+        -- Basic groups
+        "Comment", 
+        "SpecialComment", -- Doxygen comments (///) often fall here
+        
+        -- TreeSitter groups (Crucial for C/C++)
+        "@comment", 
+        "@comment.documentation", -- Specific for Doxygen documentation
+        "@lsp.type.comment",
+      }
+
+      -- Iterate over groups and apply the custom style
+      for _, group in ipairs(groups) do
+        vim.api.nvim_set_hl(0, group, { fg = "#B7E5CD", italic = true, bold = false })
+      end
+
+      -- Override Visual mode (Selection) & Cursor colors
+      vim.api.nvim_set_hl(0, "Visual", { bg = "#264F78", fg = "#ffffff" })
+      vim.api.nvim_set_hl(0, "Cursor", { fg = c.vscDarkBlue, bg = c.vscLightGreen, bold = true })
+
     end,
   },
 }
