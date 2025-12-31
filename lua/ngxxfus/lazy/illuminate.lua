@@ -79,18 +79,18 @@ return {
         disable_keymaps = false,
       })
 
-      local function custom_illuminate_colors()
-          vim.api.nvim_set_hl(0, "IlluminatedWordText", { underline = false, bold = true, italic = true, bg = "NONE"})
-          vim.api.nvim_set_hl(0, "IlluminatedWordRead", { underline = false, bold = true, italic = true, bg = "NONE" })
-          vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { underline = false, bold = true, italic = true, bg = "NONE" })
-      end
-
-      custom_illuminate_colors()
-
-      vim.api.nvim_create_autocmd("ColorScheme", {
-        pattern = "*",
-        callback = custom_illuminate_colors,
-      })
+      -- local function custom_illuminate_colors()
+      --     vim.api.nvim_set_hl(0, "IlluminatedWordText", { underline = false, bold = true, italic = true, bg = "NONE"})
+      --     vim.api.nvim_set_hl(0, "IlluminatedWordRead", { underline = false, bold = true, italic = true, bg = "NONE" })
+      --     vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { underline = false, bold = true, italic = true, bg = "NONE" })
+      -- end
+      --
+      -- custom_illuminate_colors()
+      --
+      -- vim.api.nvim_create_autocmd("ColorScheme", {
+      --   pattern = "*",
+      --   callback = custom_illuminate_colors,
+      -- })
 
     end,
   },

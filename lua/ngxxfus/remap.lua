@@ -180,8 +180,9 @@ map("n", "<leader>fb", "<cmd>Telescope buffers<CR>",    { desc = "Buffers" })
 map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>",  { desc = "Help Tags" })
 
 --- @section File Explorer (NvimTree)
-map("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle Explorer" })
-map("n", "<leader>o", ":NvimTreeFocus<CR>", { desc = "Focus Explorer" })
+--- @note Check hte neotree.lua instead.
+-- map("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle Explorer" })
+-- map("n", "<leader>o", ":NvimTreeFocus<CR>", { desc = "Focus Explorer" })
 
 --- @brief Auto-close completion popup with Ctrl+e (Priority over End-of-line).
 vim.keymap.set("i", "<C-e>", function()
