@@ -14,7 +14,7 @@ vim.opt.termguicolors = true
 vim.opt.nu = true
 
 --- @brief Show relative line numbers.
-vim.opt.relativenumber = false -- true
+vim.opt.relativenumber = true
 
 --- @brief Sync with system clipboard (requires xclip or similar).
 vim.opt.clipboard = 'unnamedplus'
@@ -42,4 +42,4 @@ vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
 
-
+vim.keymap.set("n", "gl", "<cmd>tselect<CR>", { desc = "Select Tag (Overload)" })

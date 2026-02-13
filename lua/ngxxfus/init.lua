@@ -42,3 +42,6 @@ require("lazy").setup({
   spec = "ngxxfus.lazy",
   change_detection = { notify = true }, -- Optional: notify on config changes
 })
+
+
+

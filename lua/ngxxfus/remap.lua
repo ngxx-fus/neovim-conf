@@ -189,3 +189,11 @@ vim.keymap.set("i", "<C-e>", function()
   -- Fallback to End of Line if no popup is visible
   return "<Esc>A" 
 end, { expr = true, desc = "Close completion or Go to EOL" })
+
+-- Standard scrolling: ScrollWheelUp/Down moves the view up and down.
+-- Shift + Scroll: Moves the view left and right (Horizontal scrolling).
+
+vim.keymap.set({'n', 'i', 'v'}, '<M-ScrollWheelDown>', '5zl')
+vim.keymap.set({'n', 'i', 'v'}, '<M-ScrollWheelUp>', '5zh')
+vim.opt.sidescroll = 1
+vim.opt.sidescrolloff = 8
