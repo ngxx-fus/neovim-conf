@@ -42,4 +42,15 @@ vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
 
+--- @brief Enable horizontal scroll using Alt + Mouse Wheel for all common modes
+--- @details Maps Alt + Wheel to scroll 5 characters left/right. Supports Normal, Visual, and Select.
+local scroll_modes = { 'n', 'v', 's', 'x' }
+for _, mode in ipairs(scroll_modes) do
+    vim.keymap.set(mode, '<M-ScrollWheelUp>', '5zh', { desc = 'Scroll left' })
+    vim.keymap.set(mode, '<M-ScrollWheelDown>', '5zl', { desc = 'Scroll right' })
+end
 
+--- @brief Horizontal scroll for Insert mode without leaving insert state
+--- @details Uses <C-o> to execute normal mode commands temporarily
+vim.keymap.set('i', '<M-ScrollWheelUp>', '<C-o>5zh', { desc = 'Scroll left (Insert)' })
+vim.keymap.set('i', '<M-ScrollWheelDown>', '<C-o>5zl', { desc = 'Scroll right (Insert)' })
