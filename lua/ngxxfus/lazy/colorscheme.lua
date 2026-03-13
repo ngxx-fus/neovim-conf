@@ -4,7 +4,7 @@
 --- @date 2026-02-06
 
 -- Toggle this variable: 1 for Dark Mode, 0 for Light Mode
-local EnableDarkMode = 0 
+local EnableDarkMode = 1 
 
 return {
     {
