@@ -24,17 +24,31 @@ return {
       "williamboman/mason.nvim",
       "neovim/nvim-lspconfig",
     },
+    
     config = function()
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      -- Configure UI borders for floating windows
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+      -- Neovim 0.11+ Global border setting for ALL floating windows (hover, signature_help, etc.)
+      vim.o.winborder = "rounded"
+
+      -- Diagnostic configuration
       vim.diagnostic.config({
-        float = { border = "single" }, -- Use single border for diagnostics
+        float = { border = "single" }, -- Overrides the global border just for diagnostics
       })
-       
+
+      -- Keymaps are defined in remap.lua and are global.
+      -- This on_attach function is a good place for buffer-local settings if needed.
+      local on_attach = function(client, bufnr)
+        -- Helper function to create buffer-local keymaps
+        local map = function(keys, func, desc)
+          vim.keymap.set("n", keys, func, { buffer = bufnr, noremap = true, silent = true, desc = "LSP: " .. desc })
+        end
+
+        -- Add any of your buffer-local LSP keymaps here using the `map` helper
+      end
+
+
       -- Keymaps are defined in remap.lua and are global.
       -- This on_attach function is a good place for buffer-local settings if needed.
       local on_attach = function(client, bufnr)
