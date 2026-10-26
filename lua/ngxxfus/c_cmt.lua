@@ -20,7 +20,10 @@ local function is_banner_line(str)
     if not str or str == "" then
         return true
     end
-    -- Check if string has no alphanumeric characters and is only comment/banner symbols
+    -- [REGEX: DECORATIVE / BANNER LINE CHECK]:
+    -- "%w" matches alphanumeric characters (letters and digits).
+    -- If the line does NOT contain any letter or digit (e.g. only *, /, -, =, spaces...),
+    -- it is considered a decorative border line and skipped.
     return not str:match("%w")
 end
 
@@ -31,17 +34,22 @@ local function clean_text(text)
     if not text then
         return ""
     end
+    -- [REGEX: STRIP COMMENT TOKENS & TRAILING/LEADING BORDERS]:
+    -- Lua pattern syntax:
+    --   ^ : line start, $ : line end, %s : whitespace, + : 1 or more, * : 0 or more
     return text
-        :gsub("^%s*/%*+/?%s*", "") -- Leading /* or /**
-        :gsub("^%s*%*+/?%s*", "")   -- Leading * or */
-        :gsub("^%s*//+/?%s*", "")   -- Leading //
-        :gsub("%s*%*+/%s*$", "")   -- Trailing */
-        :gsub("%s*//+%s*$", "")     -- Trailing //
-        :gsub("%s*%*+%s*$", "")     -- Trailing *
-        :gsub("^%s*[%-%=_~]+%s*", "") -- Leading decorative dashes/equals
-        :gsub("%s*[%-%=_~]+%s*$", "") -- Trailing decorative dashes/equals
-        :gsub("^%s+", "")           -- Trim left
-        :gsub("%s+$", "")           -- Trim right
+        :gsub("^%s*/%*+/?%s*", "")     -- Remove leading: /*, /**, /*/
+        :gsub("^%s*%*+/?%s*", "")       -- Remove leading: *, **, */
+        :gsub("^%s*//+/?%s*", "")       -- Remove leading: //, ///
+        :gsub("%s*%*+/%s*$", "")       -- Remove trailing: */, **/
+        :gsub("%s*//+%s*$", "")         -- Remove trailing: //
+        :gsub("%s*%*+%s*$", "")         -- Remove trailing: *, ***
+        :gsub("^%s*[%-%=_~]+%s*", "")   -- Remove leading decorative borders: -, =, _, ~
+        :gsub("%s*[%-%=_~]+%s*$", "")   -- Remove trailing decorative borders: -, =, _, ~
+        -- [TIP]: To strip any custom border symbol from ends, add another rule:
+        -- :gsub("^%s*[#]+%s*", "")      -- Example: strip leading #
+        :gsub("^%s+", "")               -- Trim leading whitespace
+        :gsub("%s+$", "")               -- Trim trailing whitespace
 end
 
 --- @brief Extracts a meaningful summary/title from folded comment lines.
@@ -53,11 +61,20 @@ function M.extract_comment_title(lines)
         return nil, false
     end
 
-    -- 1. First Pass: Look specifically for @brief or \brief or brief:
+    -- =========================================================================
+    -- [REGEX: KEYWORD / TAG EXTRACTION (Pass 1)]
+    -- =========================================================================
+    -- Priority pass: Search for @brief, \brief, or brief: to use as title.
+    -- To support additional doc tags (such as @summary, @details, @note...),
+    -- simply add more patterns below:
     for _, line in ipairs(lines) do
-        local brief_match = line:match("[@\\]brief%s*:?%s*(.+)")
-            or line:match("^%s*%*+%s*brief%s*:?%s*(.+)")
-            or line:match("^%s*//+%s*brief%s*:?%s*(.+)")
+        local brief_match = line:match("[@\\]brief%s*:?%s*(.+)")        -- Matches "@brief ..." or "\brief ..."
+            or line:match("^%s*%*+%s*brief%s*:?%s*(.+)")               -- Matches "* brief: ..."
+            or line:match("^%s*//+%s*brief%s*:?%s*(.+)")               -- Matches "// brief: ..."
+            -- [EXAMPLES FOR ADDING MORE TAGS]:
+            -- or line:match("[@\\]summary%s*:?%s*(.+)")                -- Matches "@summary ..."
+            -- or line:match("[@\\]details%s*:?%s*(.+)")                -- Matches "@details ..."
+            -- or line:match("[@\\]note%s*:?%s*(.+)")                   -- Matches "@note ..."
 
         if brief_match then
             local cleaned = clean_text(brief_match)
@@ -67,12 +84,15 @@ function M.extract_comment_title(lines)
         end
     end
 
-    -- 2. Second Pass: Find the first non-empty, non-banner comment line
+    -- =========================================================================
+    -- [Pass 2: First meaningful comment line]
+    -- =========================================================================
+    -- If no @brief tag is found, fallback to the first line with real content.
     for i = 1, #lines do
         local line = lines[i]
         local cleaned = clean_text(line)
 
-        -- Must contain alphanumeric text and not be purely decorative symbols
+        -- Must contain alphanumeric characters (%w) and not be purely decorative
         if #cleaned > 0 and not is_banner_line(cleaned) then
             return cleaned, false
         end
@@ -90,12 +110,17 @@ function M.detect_comment_style(line)
         return false, ""
     end
 
-    -- Block comment banner: starts with /*
+    -- =========================================================================
+    -- [REGEX: DETECT COMMENT BANNER STYLE]
+    -- =========================================================================
+    -- Block comment banner: Starts with /* (e.g., /*, /**, /****************)
     if line:match("^%s*/%*") then
         return true, "block"
     end
 
-    -- Line comment banner: starts with // followed by repetitive banner symbols
+    -- Line comment banner: Starts with // followed by at least 3 repeating border symbols (*, =, -, #)
+    -- E.g.: //**************** or //---------------- or //================
+    -- To allow other border symbols, add them inside the character set [%*=%-%#...]{3,}
     if line:match("^%s*//[%*=%-%#]{3,}") then
         return true, "line"
     end
@@ -128,7 +153,11 @@ local function default_ufo_handler(virtText, lnum, endLnum, width, truncate)
         end
         curWidth = curWidth + chunkWidth
     end
-    table.insert(newVirtText, { suffix, "MoreMsg" })
+    -- =========================================================================
+    -- [FOLD COUNTER BADGE COLOR FOR NORMAL CODE (functions, structs, etc.)]
+    -- =========================================================================
+    -- Use "Comment" (or "NonText") to blend in without "MoreMsg" background.
+    table.insert(newVirtText, { suffix, "Comment" })
     return newVirtText
 end
 
@@ -192,14 +221,27 @@ function M.fold_virt_text_handler(virtText, lnum, endLnum, width, truncate)
     local fill_width = math.max(3, targetWidth - (prefix_width + title_width + close_width))
     local fill_str = string.rep(fill_char, fill_width)
 
-    local title_hl = is_brief and "SpecialComment" or "Title"
+    -- =========================================================================
+    -- [COLOR / HIGHLIGHT GROUP CONFIGURATION]
+    -- =========================================================================
+    -- Customize colors by changing the highlight group names:
+    --   - "Comment"        : Matches colorscheme comment color (recommended)
+    --   - "SpecialComment" : Highlighted / Doxygen doc tag color
+    --   - "NonText"        : Dimmed text without background
+    --   - "Title"          : Bold / accent title color
+    --   - "MoreMsg"        : Notice / badge color (often has a prominent background)
+    -- =========================================================================
+    local hl_prefix = "Comment"
+    local hl_title  = "Comment"  -- Change to: (is_brief and "SpecialComment" or "Title") to accent title text
+    local hl_fill   = "Comment"
+    local hl_suffix = "Comment"  -- Changed to "Comment" to blend in and remove the gray background box
 
     -- Return syntax-highlighted chunks
     return {
-        { prefix, "Comment" },
-        { title_display, title_hl },
-        { fill_str .. close_suffix, "Comment" },
-        { suffix, "MoreMsg" },
+        { prefix, hl_prefix },
+        { title_display, hl_title },
+        { fill_str .. close_suffix, hl_fill },
+        { suffix, hl_suffix },
     }
 end
 
