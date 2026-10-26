@@ -4,7 +4,7 @@
 --- @date 2026-02-06
 
 --- @brief Toggle theme: 1 for Dark Mode, 0 for Light Mode.
-local EnableDarkMode = 1 
+local EnableDarkMode = 0 
 
 return {
     {

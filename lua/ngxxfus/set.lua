@@ -1,56 +1,50 @@
 --- @file set.lua
 --- @brief Neovim editor settings and options configuration.
---- @details Configures global options for interface, indentation, and behavior.
+--- @details Configures global options for interface, indentation, search, and clipboard.
+---          Keybindings have been extracted and migrated to `remap.lua`.
 --- @author ngxxfus
---- @date 2025-11-30
+--- @date 2026-10-26
 
+-- Ensure user site directory is included in runtimepath
+vim.opt.rtp:prepend(vim.fn.stdpath("data") .. "/site")
+
+--- @section Colors & Theme
 --- @brief Uncomment to use tokyonight colorscheme.
 -- vim.cmd.colorscheme("tokyonight")
 
---- @brief Enable 24-bit RGB color in the terminal.
+--- @brief Enable 24-bit RGB colors in the terminal.
 vim.opt.termguicolors = true
 
+--- @section Interface & Line Numbers
 --- @brief Enable line numbers.
 vim.opt.nu = true
 
---- @brief Show relative line numbers.
-vim.opt.relativenumber = false -- true
+--- @brief Disable relative line numbers (set to true if relative numbers are preferred).
+vim.opt.relativenumber = false
 
---- @brief Sync with system clipboard (requires xclip or similar).
-vim.opt.clipboard = 'unnamedplus'
+--- @brief Disable line wrapping for cleaner code view.
+vim.opt.wrap = false
 
+--- @section Search Options
+--- @brief Show search matches incrementally as you type.
+vim.opt.incsearch = true
+
+--- @section Clipboard Integration
+--- @brief Sync with system clipboard (requires xclip, wl-clipboard, or equivalent).
+vim.opt.clipboard = "unnamedplus"
+
+--- @section Indentation Options
 --- @brief Number of spaces that a <Tab> in the file counts for.
 vim.opt.tabstop = 4
 
 --- @brief Number of spaces that a <Tab> counts for while editing.
 vim.opt.softtabstop = 4
 
---- @brief Number of spaces to use for each step of (auto)indent.
+--- @brief Number of spaces to use for each step of auto-indentation.
 vim.opt.shiftwidth = 4
 
---- @brief Use spaces instead of tabs.
+--- @brief Convert tabs to spaces.
 vim.opt.expandtab = true
 
---- @brief Do smart autoindenting when starting a new line.
+--- @brief Enable smart autoindenting when starting a new line.
 vim.opt.smartindent = true
-
---- @brief Disable line wrapping.
-vim.opt.wrap = false
-
---- @brief Show search matches as you type.
-vim.opt.incsearch = true
-
-vim.opt.termguicolors = true
-
---- @brief Enable horizontal scroll using Alt + Mouse Wheel for all common modes
---- @details Maps Alt + Wheel to scroll 5 characters left/right. Supports Normal, Visual, and Select.
-local scroll_modes = { 'n', 'v', 's', 'x' }
-for _, mode in ipairs(scroll_modes) do
-    vim.keymap.set(mode, '<M-ScrollWheelUp>', '5zh', { desc = 'Scroll left' })
-    vim.keymap.set(mode, '<M-ScrollWheelDown>', '5zl', { desc = 'Scroll right' })
-end
-
---- @brief Horizontal scroll for Insert mode without leaving insert state
---- @details Uses <C-o> to execute normal mode commands temporarily
-vim.keymap.set('i', '<M-ScrollWheelUp>', '<C-o>5zh', { desc = 'Scroll left (Insert)' })
-vim.keymap.set('i', '<M-ScrollWheelDown>', '<C-o>5zl', { desc = 'Scroll right (Insert)' })

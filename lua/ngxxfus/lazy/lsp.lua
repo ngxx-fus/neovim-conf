@@ -1,110 +1,197 @@
 --- @file lsp.lua
 --- @brief Language Server Protocol (LSP) configuration
---- @details Configures LSP servers using:
----          - `williamboman/mason.nvim`: LSP server installer
----          - `williamboman/mason-lspconfig.nvim`: Mason integration with lspconfig
----          - `neovim/nvim-lspconfig`: LSP client configuration
+--- @details Configures Language Server Protocol (LSP) clients for Neovim:
+---          - C/C++: clangd (with support for scanning .clangd/compile_commands.json)
+---          - Lua: lua_ls
+---          - Python: pyright
+---          Integrated with:
+---          - `williamboman/mason.nvim`: Portable package manager for LSP servers
+---          - `williamboman/mason-lspconfig.nvim`: Bridge between Mason and nvim-lspconfig
+---          - `neovim/nvim-lspconfig`: Quickstart configs for Nvim LSP client
+---          - `hrsh7th/cmp-nvim-lsp`: LSP source for nvim-cmp
 --- @author ngxxfus
---- @date 2025-12-10
---- @see https://github.com/williamboman/mason.nvim
---- @see https://github.com/neovim/nvim-lspconfig
+--- @date 2026-10-26
 
 return {
-  {
-    -- Mason: LSP Installer
-    "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup()
-    end,
-  },
-  {
-    -- Mason-LSPConfig: Bridges Mason with nvim-lspconfig
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "neovim/nvim-lspconfig",
-    },
-    
-    config = function()
-      local lspconfig = require("lspconfig")
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-      -- Neovim 0.11+ Global border setting for ALL floating windows (hover, signature_help, etc.)
-      vim.o.winborder = "rounded"
-
-      -- Diagnostic configuration
-      vim.diagnostic.config({
-        float = { border = "single" }, -- Overrides the global border just for diagnostics
-      })
-
-      -- Keymaps are defined in remap.lua and are global.
-      -- This on_attach function is a good place for buffer-local settings if needed.
-      local on_attach = function(client, bufnr)
-        -- Helper function to create buffer-local keymaps
-        local map = function(keys, func, desc)
-          vim.keymap.set("n", keys, func, { buffer = bufnr, noremap = true, silent = true, desc = "LSP: " .. desc })
-        end
-
-        -- Add any of your buffer-local LSP keymaps here using the `map` helper
-      end
-
-
-      -- Keymaps are defined in remap.lua and are global.
-      -- This on_attach function is a good place for buffer-local settings if needed.
-      local on_attach = function(client, bufnr)
-        -- Helper function to create buffer-local keymaps
-        local map = function(keys, func, desc)
-          vim.keymap.set("n", keys, func, { buffer = bufnr, noremap = true, silent = true, desc = "LSP: " .. desc })
-        end
-
-        -- Essential keybindings
-        map("gd", vim.lsp.buf.definition, "Go to Definition")
-        map("gi", vim.lsp.buf.implementation, "Go to Implementation")
-
-        -- Other useful keybindings
-        map("K", vim.lsp.buf.hover, "Hover Documentation")
-        map("gr", vim.lsp.buf.references, "Go to References")
-        map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
-        map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
-      end
-
-      -- A table to hold custom server configurations
-      local servers = {
-         lua_ls = {
-           settings = {
-             Lua = {
-               diagnostics = { globals = { "vim" } },
-               workspace = { checkThirdParty = false, library = vim.api.nvim_get_runtime_file("", true) },
-             },
-           },
-         },
-         clangd = {
-            -- For ESP-IDF, you might need to point to the compile_commands.json.
-            -- This is best done with a .clangd file in your project root.
-            cmd = { 
-                "clangd", 
-                "--background-index",
-                "--completion-style=detailed",
-                "--header-insertion=never", 
-                "--function-arg-placeholders",
-                "--clang-tidy" , 
-            },
-         },
-         -- pyright and bashls will use the default setup below
-       }
- 
-      require("mason-lspconfig").setup({
-        -- A list of servers to automatically install
-        -- ensure_installed = { "clangd", "pyright", "lua_ls", "bashls" },
-        handlers = {
-          function(server_name)
-            local server_opts = servers[server_name] or {}
-            server_opts.on_attach = on_attach
-            server_opts.capabilities = capabilities
-            lspconfig[server_name].setup(server_opts)
-          end,
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            "williamboman/mason.nvim",
+            "williamboman/mason-lspconfig.nvim",
+            "hrsh7th/cmp-nvim-lsp",
         },
-      })
-    end,
-  },
+        config = function()
+            -- 1. Initialize Mason package manager
+            require("mason").setup()
+
+            local lspconfig = require("lspconfig")
+            local util = require("lspconfig.util")
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+            -- 2. Configure UI borders and diagnostics display
+            vim.o.winborder = "rounded"
+            vim.diagnostic.config({
+                float = { border = "single" },
+            })
+
+            -- 3. Define buffer-local keymaps when LSP attaches to a buffer
+            local on_attach = function(client, bufnr)
+                local map = function(keys, func, desc)
+                    vim.keymap.set("n", keys, func, {
+                        buffer = bufnr,
+                        noremap = true,
+                        silent = true,
+                        desc = "LSP: " .. desc,
+                    })
+                end
+
+                -- Navigation keybindings
+                map("gd", vim.lsp.buf.definition, "Go to Definition")
+                map("gD", vim.lsp.buf.declaration, "Go to Declaration")
+                map("gi", vim.lsp.buf.implementation, "Go to Implementation")
+                map("gr", vim.lsp.buf.references, "Go to References")
+
+                -- Documentation & Information
+                map("K", vim.lsp.buf.hover, "Hover Documentation")
+                map("<leader>k", vim.lsp.buf.signature_help, "Signature Help")
+
+                -- Code Refactoring & Actions
+                map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
+                map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
+                map("<leader>f", function()
+                    vim.lsp.buf.format({ async = true })
+                end, "Format Document")
+            end
+
+            -- 4. Server-specific configurations
+            local servers = {
+                --- @section Lua LSP Configuration (lua_ls)
+                lua_ls = {
+                    settings = {
+                        Lua = {
+                            runtime = {
+                                version = "LuaJIT",
+                            },
+                            diagnostics = {
+                                globals = { "vim" },
+                            },
+                            workspace = {
+                                checkThirdParty = false,
+                                library = {
+                                    vim.env.VIMRUNTIME,
+                                },
+                            },
+                            telemetry = {
+                                enable = false,
+                            },
+                        },
+                    },
+                },
+
+                --- @section Python LSP Configuration (pyright)
+                pyright = {
+                    settings = {
+                        python = {
+                            analysis = {
+                                autoSearchPaths = true,
+                                useLibraryCodeForTypes = true,
+                                diagnosticMode = "openFilesOnly",
+                            },
+                        },
+                    },
+                },
+
+                --- @section C/C++ LSP Configuration (clangd)
+                --- Configured to detect compilation databases including .clangd/compile_commands.json
+                clangd = {
+                    cmd = {
+                        "clangd",
+                        "--background-index",
+                        "--completion-style=detailed",
+                        "--header-insertion=never",
+                        "--function-arg-placeholders",
+                        "--clang-tidy",
+                        "--query-driver=/**/*gcc*,/**/*g++*,/**/*clang*",
+                    },
+                    capabilities = {
+                        -- Avoid encoding conflict warnings between clangd and other plugins
+                        offsetEncoding = { "utf-16" },
+                    },
+                    root_dir = function(fname)
+                        -- Detect project root by common markers including .clangd folder and compile_commands.json
+                        return util.root_pattern(
+                            ".clangd",
+                            "compile_commands.json",
+                            "compile_flags.txt",
+                            ".clang-tidy",
+                            ".clang-format",
+                            "build",
+                            ".git"
+                        )(fname) or util.find_git_ancestor(fname) or vim.fs.dirname(fname)
+                    end,
+                    on_new_config = function(new_config, new_root_dir)
+                        -- Chain default handler if available in lspconfig
+                        local default_on_new_config = lspconfig.clangd.default_config
+                            and lspconfig.clangd.default_config.on_new_config
+                        if default_on_new_config then
+                            default_on_new_config(new_config, new_root_dir)
+                        end
+
+                        if not new_root_dir then
+                            return
+                        end
+
+                        local stat = (vim.uv or vim.loop).fs_stat
+
+                        -- Check if compile_commands.json exists inside .clangd/ or build/
+                        local compile_commands_path = nil
+                        if stat(new_root_dir .. "/.clangd/compile_commands.json") then
+                            compile_commands_path = new_root_dir .. "/.clangd"
+                        elseif stat(new_root_dir .. "/build/compile_commands.json") then
+                            compile_commands_path = new_root_dir .. "/build"
+                        end
+
+                        if compile_commands_path then
+                            -- Clone command table to avoid mutating the shared base configuration
+                            new_config.cmd = vim.list_extend({}, new_config.cmd)
+
+                            -- Check if --compile-commands-dir is already present
+                            local has_dir_flag = false
+                            for _, arg in ipairs(new_config.cmd) do
+                                if type(arg) == "string" and arg:match("^%-%-compile%-commands%-dir") then
+                                    has_dir_flag = true
+                                    break
+                                end
+                            end
+
+                            if not has_dir_flag then
+                                table.insert(
+                                    new_config.cmd,
+                                    "--compile-commands-dir=" .. compile_commands_path
+                                )
+                            end
+                        end
+                    end,
+                },
+            }
+
+            -- 5. Mason-LSPConfig integration and automatic setup
+            require("mason-lspconfig").setup({
+                ensure_installed = { "clangd", "lua_ls", "pyright" },
+                handlers = {
+                    function(server_name)
+                        local server_opts = servers[server_name] or {}
+                        server_opts.on_attach = on_attach
+                        -- Merge server capabilities with cmp-nvim-lsp defaults
+                        server_opts.capabilities = vim.tbl_deep_extend(
+                            "force",
+                            capabilities,
+                            server_opts.capabilities or {}
+                        )
+                        lspconfig[server_name].setup(server_opts)
+                    end,
+                },
+            })
+        end,
+    },
 }
